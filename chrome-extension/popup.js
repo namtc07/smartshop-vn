@@ -52,12 +52,12 @@ document.addEventListener('DOMContentLoaded', async () => {
           throw new Error('Lỗi kết nối tới máy chủ. Thử lại sau.');
         }
 
-        const data = await res.json();
+        const json = await res.json();
 
-        // API trả về { user: { id, email, bioPageSlug, ... }, links: [...] }
-        const userId = data.user?.id;
-        if (!userId) {
-          throw new Error('Không lấy được thông tin user. Liên hệ admin.');
+        // API trả về { success, data: { user, links }, message }
+        const userId = json.data?.user?.id;
+        if (!json.success || !userId) {
+          throw new Error(`Không tìm thấy trang bio "${slug}". Kiểm tra lại slug.`);
         }
 
         // Lưu vào chrome.storage.sync

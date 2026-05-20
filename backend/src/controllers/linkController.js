@@ -70,10 +70,13 @@ async function getBioLinks(req, res, next) {
       });
     }
 
-    // Trả về danh sách ShortLink kèm theo Product
+    // Trả về user + danh sách ShortLink kèm theo Product
     return res.json({
       success: true,
-      data: result.links,
+      data: {
+        user: result.user,
+        links: result.links
+      },
       message: 'Bio links retrieved successfully'
     });
   } catch (error) {
