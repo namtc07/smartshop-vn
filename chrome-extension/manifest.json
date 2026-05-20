@@ -5,10 +5,12 @@
   "description": "Chrome Extension hỗ trợ KOC thêm nhanh sản phẩm từ Shopee/Lazada vào Bio Link",
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "storage"
   ],
   "host_permissions": [
     "http://localhost:3000/*",
+    "https://smartshop-vn.onrender.com/*",
     "https://*.shopee.vn/*",
     "https://*.lazada.vn/*"
   ],

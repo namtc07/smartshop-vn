@@ -1,5 +1,12 @@
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+
+const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: process.env.DATABASE_URL,
+    },
+  },
+});
 
 // Hàm tạo mã ngẫu nhiên 5 ký tự (A-Za-z0-9)
 function generateRandomCode(length = 5) {

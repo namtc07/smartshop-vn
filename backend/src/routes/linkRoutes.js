@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const linkController = require('../controllers/linkController');
+const userController = require('../controllers/userController');
+
+// Đăng ký tài khoản KOC mới
+router.post('/api/users/register', userController.register);
 
 // Giai đoạn 2: API generate short link
 router.post('/api/links/generate', linkController.generate);

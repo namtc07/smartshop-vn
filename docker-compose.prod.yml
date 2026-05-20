@@ -23,7 +23,7 @@ services:
       - "3000:3000"
     environment:
       - PORT=3000
-      - DATABASE_URL=postgresql://postgres:postgres_secure_password_here@db:5432/smartshop?schema=public
+      - DATABASE_URL=postgresql://neondb_owner:npg_cpydbJNEw9G4@ep-empty-fog-aq74bkog-pooler.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
     depends_on:
       - db
 
