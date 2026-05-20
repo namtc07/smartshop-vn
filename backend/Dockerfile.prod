@@ -1,0 +1,37 @@
+# Stage 1: Build & Install deps
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# Cài đặt openssl cho Prisma
+RUN apk add --no-cache openssl
+
+COPY package*.json ./
+RUN npm install
+
+# Copy source code và generate prisma client
+COPY . .
+RUN npx prisma generate
+
+# Stage 2: Runtime image
+FROM node:18-alpine AS runner
+
+WORKDIR /app
+
+# Cài đặt openssl & postgresql-client cho Prisma & healthcheck
+RUN apk add --no-cache openssl postgresql-client
+
+# Copy node_modules & file cần thiết từ builder
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/entrypoint.sh ./entrypoint.sh
+
+# Cấp quyền thực thi cho entrypoint script
+RUN chmod +x entrypoint.sh
+
+EXPOSE 3000
+
+ENTRYPOINT ["/bin/sh", "/app/entrypoint.sh"]
+CMD ["npm", "start"]

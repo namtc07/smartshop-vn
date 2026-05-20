@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "SmartShop VN - KOC Bio Link Generator",
+  "version": "1.0.0",
+  "description": "Chrome Extension hỗ trợ KOC thêm nhanh sản phẩm từ Shopee/Lazada vào Bio Link",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://localhost:3000/*",
+    "https://*.shopee.vn/*",
+    "https://*.lazada.vn/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.shopee.vn/*",
+        "https://*.lazada.vn/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ]
+}

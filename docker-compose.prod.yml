@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: smartshop_prod_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_secure_password_here
+      POSTGRES_DB: smartshop
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    # Không expose cổng 5432 ra ngoài internet để bảo mật
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: smartshop_prod_api
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - DATABASE_URL=postgresql://postgres:postgres_secure_password_here@db:5432/smartshop?schema=public
+    depends_on:
+      - db
+
+volumes:
+  postgres_prod_data:
