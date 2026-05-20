@@ -3,19 +3,28 @@ const router = express.Router();
 const linkController = require('../controllers/linkController');
 const userController = require('../controllers/userController');
 
-// Đăng ký tài khoản KOC mới
+// ── Auth
 router.post('/api/users/register', userController.register);
-
-// Đăng nhập bằng email + slug
 router.post('/api/users/login', userController.login);
+router.patch('/api/users/:userId/profile', userController.updateProfile);
 
-// Giai đoạn 2: API generate short link
+// ── Dashboard (all links + clicks)
+router.get('/api/dashboard/:slug', linkController.getDashboardLinks);
+
+// ── Link management
 router.post('/api/links/generate', linkController.generate);
+router.delete('/api/links/:id', linkController.deleteLink);
+router.patch('/api/links/reorder', linkController.reorderLinks);
+router.patch('/api/links/:id/toggle', linkController.toggleLink);
+router.patch('/api/links/:id', linkController.editLink);
 
-// Giai đoạn 2: API lấy toàn bộ ShortLink của KOC theo slug
+// ── Stats
+router.get('/api/stats/:userId', linkController.getLinkStats);
+
+// ── Public bio page
 router.get('/api/b/:slug', linkController.getBioLinks);
 
-// Giai đoạn 2: API Tracking & Redirect 302
+// ── Redirect & tracking
 router.get('/:shortCode', linkController.redirectShortLink);
 
 module.exports = router;

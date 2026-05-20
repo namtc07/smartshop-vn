@@ -53,4 +53,20 @@ async function loginUser({ email, password }) {
   return user;
 }
 
-module.exports = { registerUser, loginUser };
+async function updateProfile(userId, { displayName, bio, avatarUrl }) {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) throw Object.assign(new Error('User không tồn tại.'), { status: 404 });
+
+  const updated = await prisma.user.update({
+    where: { id: userId },
+    data: {
+      displayName: displayName !== undefined ? displayName : undefined,
+      bio: bio !== undefined ? bio : undefined,
+      avatarUrl: avatarUrl !== undefined ? avatarUrl : undefined,
+    }
+  });
+  const { password: _, ...safe } = updated;
+  return safe;
+}
+
+module.exports = { registerUser, loginUser, updateProfile };

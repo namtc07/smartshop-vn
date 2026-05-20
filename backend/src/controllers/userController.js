@@ -73,4 +73,13 @@ async function login(req, res, next) {
   }
 }
 
-module.exports = { register, login };
+async function updateProfile(req, res, next) {
+  try {
+    const { userId } = req.params;
+    const { displayName, bio, avatarUrl } = req.body;
+    const user = await userService.updateProfile(userId, { displayName, bio, avatarUrl });
+    return res.json({ success: true, data: user, message: 'Đã cập nhật profile.' });
+  } catch (error) { next(error); }
+}
+
+module.exports = { register, login, updateProfile };

@@ -8,21 +8,24 @@ generator client {
 }
 
 model User {
-  id          String      @id @default(uuid())
-  email       String      @unique
-  password    String
-  bioPageSlug String      @unique
-  ShortLinks  ShortLink[]
+  id            String      @id @default(uuid())
+  email         String      @unique
+  password      String
+  bioPageSlug   String      @unique
+  displayName   String?
+  bio           String?
+  avatarUrl     String?
+  ShortLinks    ShortLink[]
 }
 
 model Product {
-  id          String      @id @default(uuid())
-  platform    String
-  originalUrl String
-  name        String
-  imageUrl    String?
+  id           String      @id @default(uuid())
+  platform     String
+  originalUrl  String
+  name         String
+  imageUrl     String?
   currentPrice Float?
-  ShortLinks  ShortLink[]
+  ShortLinks   ShortLink[]
 }
 
 model ShortLink {
@@ -32,16 +35,17 @@ model ShortLink {
   shortCode         String          @unique
   affiliateDeepLink String
   isActiveOnBio     Boolean         @default(true)
+  sortOrder         Int             @default(0)
   User              User            @relation(fields: [userId], references: [id])
   Product           Product         @relation(fields: [productId], references: [id])
   ClickTrackings    ClickTracking[]
 }
 
 model ClickTracking {
-  id          String      @id @default(uuid())
+  id          String    @id @default(uuid())
   shortLinkId String
-  clickedAt   DateTime    @default(now())
+  clickedAt   DateTime  @default(now())
   deviceOS    String?
   referrer    String?
-  ShortLink   ShortLink   @relation(fields: [shortLinkId], references: [id])
+  ShortLink   ShortLink @relation(fields: [shortLinkId], references: [id])
 }
