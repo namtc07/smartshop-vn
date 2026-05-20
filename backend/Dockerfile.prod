@@ -11,7 +11,7 @@ RUN npm install
 
 # Copy source code và generate prisma client
 COPY . .
-RUN npx prisma generate
+RUN DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy" npx prisma generate
 
 # Stage 2: Runtime image
 FROM node:18-alpine AS runner

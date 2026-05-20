@@ -6,6 +6,9 @@ const userController = require('../controllers/userController');
 // Đăng ký tài khoản KOC mới
 router.post('/api/users/register', userController.register);
 
+// Đăng nhập bằng email + slug
+router.post('/api/users/login', userController.login);
+
 // Giai đoạn 2: API generate short link
 router.post('/api/links/generate', linkController.generate);
 
