@@ -44,9 +44,7 @@ async function getBioLinks(slug: string): Promise<ShortLink[] | null> {
     }
 
     const json = await res.json();
-    // API trả về { success, data: { user, links }, message }
-    if (!json.success) return null;
-    return json.data?.links ?? json.data ?? null;
+    return json.success && Array.isArray(json.data) ? json.data : null;
   } catch (error) {
     console.error('Error fetching bio links:', error);
     return null;

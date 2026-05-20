@@ -100,7 +100,9 @@ export default function DashboardPage() {
       const res = await fetch(`${API_URL}/api/b/${currentSlug}`, { cache: 'no-store' });
       if (!res.ok) throw new Error('Không tải được danh sách sản phẩm.');
       const json = await res.json();
-      setLinks(json.success ? json.data : []);
+      console.debug('[Dashboard] API response:', json);
+      console.debug('[Dashboard] json.data type:', typeof json.data, '| isArray:', Array.isArray(json.data));
+      setLinks(json.success && Array.isArray(json.data) ? json.data : []);
     } catch {
       setFetchError('Không kết nối được tới server. Kiểm tra backend đang chạy chưa.');
     } finally {
@@ -318,8 +320,9 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="flex flex-col gap-3">
-              {links.map((link, idx) => {
-                const p = link.Product;
+              {(Array.isArray(links) ? links : []).map((link, idx) => {
+                const p = link?.Product;
+                if (!p) return null;
                 return (
                   <div
                     key={link.id}
@@ -336,7 +339,7 @@ export default function DashboardPage() {
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover" />
                       ) : (
-                        p.platform.toLowerCase() === 'shopee' ? '🛍️' : '🎵'
+                        p.platform?.toLowerCase() === 'shopee' ? '🛍️' : '🎵'
                       )}
                     </div>
 
@@ -344,7 +347,7 @@ export default function DashboardPage() {
                     <div className="flex-1 min-w-0 flex flex-col justify-between">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <PlatformBadge platform={p.platform} />
+                          <PlatformBadge platform={p.platform ?? ''} />
                           <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded uppercase border ${
                             link.isActiveOnBio
                               ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
