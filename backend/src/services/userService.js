@@ -53,7 +53,7 @@ async function loginUser({ email, password }) {
   return user;
 }
 
-async function updateProfile(userId, { displayName, bio, avatarUrl }) {
+async function updateProfile(userId, { displayName, bio, avatarUrl, socialLinks, themeSettings, seoTitle, seoDescription, ogImage, defaultConversionRate, defaultCommissionRate }) {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) throw Object.assign(new Error('User không tồn tại.'), { status: 404 });
 
@@ -63,6 +63,13 @@ async function updateProfile(userId, { displayName, bio, avatarUrl }) {
       displayName: displayName !== undefined ? displayName : undefined,
       bio: bio !== undefined ? bio : undefined,
       avatarUrl: avatarUrl !== undefined ? avatarUrl : undefined,
+      socialLinks: socialLinks !== undefined ? socialLinks : undefined,
+      themeSettings: themeSettings !== undefined ? themeSettings : undefined,
+      seoTitle: seoTitle !== undefined ? seoTitle : undefined,
+      seoDescription: seoDescription !== undefined ? seoDescription : undefined,
+      ogImage: ogImage !== undefined ? ogImage : undefined,
+      defaultConversionRate: defaultConversionRate !== undefined ? (defaultConversionRate != null ? parseFloat(defaultConversionRate) : null) : undefined,
+      defaultCommissionRate: defaultCommissionRate !== undefined ? (defaultCommissionRate != null ? parseFloat(defaultCommissionRate) : null) : undefined,
     }
   });
   const { password: _, ...safe } = updated;

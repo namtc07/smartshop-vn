@@ -8,14 +8,23 @@ generator client {
 }
 
 model User {
-  id            String      @id @default(uuid())
-  email         String      @unique
-  password      String
-  bioPageSlug   String      @unique
-  displayName   String?
-  bio           String?
-  avatarUrl     String?
-  ShortLinks    ShortLink[]
+  id                    String          @id @default(uuid())
+  email                 String          @unique
+  password              String
+  bioPageSlug           String          @unique
+  displayName           String?
+  bio                   String?
+  avatarUrl             String?
+  socialLinks           Json?
+  themeSettings         Json?
+  seoTitle              String?
+  seoDescription        String?
+  ogImage               String?
+  defaultConversionRate Float?
+  defaultCommissionRate Float?
+  ShortLinks            ShortLink[]
+  Categories            Category[]
+  RevenueEntries        RevenueEntry[]
 }
 
 model Product {
@@ -28,6 +37,15 @@ model Product {
   ShortLinks   ShortLink[]
 }
 
+model Category {
+  id         String      @id @default(uuid())
+  userId     String
+  name       String
+  sortOrder  Int         @default(0)
+  User       User        @relation(fields: [userId], references: [id])
+  ShortLinks ShortLink[]
+}
+
 model ShortLink {
   id                String          @id @default(uuid())
   userId            String
@@ -36,9 +54,30 @@ model ShortLink {
   affiliateDeepLink String
   isActiveOnBio     Boolean         @default(true)
   sortOrder         Int             @default(0)
+  isFeatured        Boolean         @default(false)
+  badgeText         String?
+  videoUrl          String?
+  customShortCode   String?         @unique
+  commissionRate    Float?
+  conversionRate    Float?
+  categoryId        String?
+  startDate         DateTime?
+  endDate           DateTime?
   User              User            @relation(fields: [userId], references: [id])
   Product           Product         @relation(fields: [productId], references: [id])
+  Category          Category?       @relation(fields: [categoryId], references: [id])
   ClickTrackings    ClickTracking[]
+}
+
+model RevenueEntry {
+  id           String   @id @default(uuid())
+  userId       String
+  month        String
+  platform     String
+  actualAmount Float
+  notes        String?
+  createdAt    DateTime @default(now())
+  User         User     @relation(fields: [userId], references: [id])
 }
 
 model ClickTracking {

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartShop</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">
+        <div class="logo-icon">S</div>
+        <span class="logo-text">SmartShop</span>
+      </div>
+      <button id="btn-settings" class="icon-btn" title="Cài đặt">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Login screen -->
+    <div id="screen-login" class="screen">
+      <p class="hint">Nhập thông tin tài khoản SmartShop để bắt đầu.</p>
+      <div class="field">
+        <label>Slug của bạn</label>
+        <input id="input-slug" type="text" placeholder="ten-koc-cua-ban" />
+      </div>
+      <div class="field">
+        <label>User ID</label>
+        <input id="input-userid" type="text" placeholder="Lấy từ Dashboard → Cài đặt" />
+      </div>
+      <div class="field">
+        <label>API URL</label>
+        <input id="input-api" type="url" placeholder="http://localhost:3000" />
+      </div>
+      <div id="login-error" class="error hidden"></div>
+      <button id="btn-save-login" class="btn-primary">Lưu & kết nối</button>
+    </div>
+
+    <!-- Settings screen -->
+    <div id="screen-settings" class="screen hidden">
+      <p class="hint">Đang đăng nhập với:</p>
+      <div id="settings-info" class="info-box"></div>
+      <div class="field">
+        <label>API URL</label>
+        <input id="settings-api" type="url" />
+      </div>
+      <button id="btn-update-settings" class="btn-primary">Cập nhật</button>
+      <button id="btn-logout" class="btn-danger">Đăng xuất</button>
+    </div>
+
+    <!-- Main screen: product detected -->
+    <div id="screen-main" class="screen hidden">
+      <!-- Product preview -->
+      <div id="product-card" class="product-card">
+        <div id="product-img-wrap" class="product-img">
+          <img id="product-img" src="" alt="" />
+        </div>
+        <div class="product-info">
+          <div id="product-platform" class="platform-badge"></div>
+          <div id="product-name" class="product-name"></div>
+          <div id="product-price" class="product-price"></div>
+        </div>
+      </div>
+
+      <!-- Affiliate link input -->
+      <div class="field">
+        <label>Affiliate Deep Link <span class="required">*</span></label>
+        <input id="input-affiliate" type="url" placeholder="https://s.shopee.vn/..." />
+        <p class="field-hint">Link có tracking affiliate của bạn</p>
+      </div>
+
+      <!-- Options row -->
+      <div class="options-row">
+        <label class="toggle-label">
+          <input id="toggle-featured" type="checkbox" />
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span>Nổi bật</span>
+        </label>
+        <div class="field-inline">
+          <label>Badge</label>
+          <input id="input-badge" type="text" placeholder="Sale 50%..." maxlength="20" />
+        </div>
+      </div>
+
+      <div id="add-error" class="error hidden"></div>
+      <div id="add-success" class="success hidden">✓ Đã thêm vào Bio Link!</div>
+
+      <button id="btn-add" class="btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+        </svg>
+        Thêm vào Bio Link
+      </button>
+    </div>
+
+    <!-- No product detected -->
+    <div id="screen-no-product" class="screen hidden">
+      <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <p>Không phát hiện sản phẩm.</p>
+        <p class="hint">Mở trang sản phẩm trên Shopee, Lazada hoặc TikTok Shop.</p>
+      </div>
+    </div>
+
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -24,3 +24,150 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ───────────────────────────────────────────────
+   Dashboard theme tokens (light / dark)
+   Scoped to .dashboard-root so bio pages and
+   marketing pages remain unaffected.
+   ─────────────────────────────────────────────── */
+
+.dashboard-root {
+  /* Dark (default) */
+  --dash-bg: #09090b;
+  --dash-bg-elevated: #0c0c0e;
+  --dash-surface: rgb(24 24 27 / 0.6);
+  --dash-surface-solid: #18181b;
+  --dash-surface-hover: rgb(39 39 42 / 0.6);
+  --dash-border: rgb(39 39 42 / 0.8);
+  --dash-border-strong: #3f3f46;
+  --dash-text: #fafafa;
+  --dash-text-soft: #d4d4d8;
+  --dash-text-mute: #a1a1aa;
+  --dash-text-dim: #71717a;
+  --dash-text-faint: #52525b;
+  --dash-accent: #8b5cf6;
+  --dash-accent-soft: rgb(139 92 246 / 0.12);
+  --dash-accent-ring: rgb(139 92 246 / 0.25);
+
+  --dash-mesh-1: rgb(124 58 237 / 0.15);
+  --dash-mesh-2: rgb(236 72 153 / 0.10);
+  --dash-mesh-3: rgb(14 165 233 / 0.08);
+
+  background: var(--dash-bg);
+  color: var(--dash-text);
+}
+
+.dashboard-root[data-theme="light"] {
+  --dash-bg: #fafafa;
+  --dash-bg-elevated: #ffffff;
+  --dash-surface: rgb(255 255 255 / 0.7);
+  --dash-surface-solid: #ffffff;
+  --dash-surface-hover: rgb(244 244 245 / 0.8);
+  --dash-border: rgb(228 228 231 / 0.9);
+  --dash-border-strong: #d4d4d8;
+  --dash-text: #18181b;
+  --dash-text-soft: #27272a;
+  --dash-text-mute: #52525b;
+  --dash-text-dim: #71717a;
+  --dash-text-faint: #a1a1aa;
+  --dash-accent: #7c3aed;
+  --dash-accent-soft: rgb(124 58 237 / 0.08);
+  --dash-accent-ring: rgb(124 58 237 / 0.20);
+
+  --dash-mesh-1: rgb(124 58 237 / 0.10);
+  --dash-mesh-2: rgb(236 72 153 / 0.08);
+  --dash-mesh-3: rgb(14 165 233 / 0.06);
+}
+
+/* Mesh gradient backdrop */
+.dashboard-mesh {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(at 15% 5%, var(--dash-mesh-1) 0px, transparent 50%),
+    radial-gradient(at 95% 90%, var(--dash-mesh-2) 0px, transparent 55%);
+}
+
+/* Glass card */
+.glass-card {
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Phone mockup notch & frame */
+.phone-frame {
+  position: relative;
+  border-radius: 2.5rem;
+  background: linear-gradient(145deg, #27272a, #18181b);
+  padding: 0.5rem;
+  box-shadow:
+    0 30px 60px -20px rgb(0 0 0 / 0.5),
+    0 0 0 1px rgb(255 255 255 / 0.04),
+    inset 0 0 0 1px rgb(255 255 255 / 0.05);
+}
+
+.dashboard-root[data-theme="light"] .phone-frame {
+  background: linear-gradient(145deg, #f4f4f5, #d4d4d8);
+  box-shadow:
+    0 20px 50px -15px rgb(0 0 0 / 0.18),
+    0 0 0 1px rgb(0 0 0 / 0.05);
+}
+
+/* Hide scrollbar */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* Animations */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { animation: fade-in 0.18s ease-out; }
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+@keyframes confetti-pop {
+  0%   { transform: scale(0) rotate(0deg); opacity: 0; }
+  50%  { transform: scale(1.2) rotate(180deg); opacity: 1; }
+  100% { transform: scale(1) rotate(360deg); opacity: 1; }
+}
+.animate-confetti { animation: confetti-pop 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up { animation: slide-up 0.3s ease-out; }
+
+@keyframes pop-in {
+  0%   { opacity: 0; transform: scale(0.9); }
+  60%  { opacity: 1; transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+.animate-pop-in { animation: pop-in 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* Aurora glow for stats hero */
+.aurora-glow {
+  background:
+    radial-gradient(ellipse at top left, rgb(139 92 246 / 0.45), transparent 60%),
+    radial-gradient(ellipse at bottom right, rgb(236 72 153 / 0.35), transparent 60%),
+    radial-gradient(ellipse at top right, rgb(56 189 248 / 0.25), transparent 60%),
+    linear-gradient(135deg, #1e1b4b 0%, #4c1d95 50%, #831843 100%);
+}
+
+.dashboard-root[data-theme="light"] .aurora-glow {
+  background:
+    radial-gradient(ellipse at top left, rgb(139 92 246 / 0.55), transparent 60%),
+    radial-gradient(ellipse at bottom right, rgb(236 72 153 / 0.40), transparent 60%),
+    radial-gradient(ellipse at top right, rgb(56 189 248 / 0.30), transparent 60%),
+    linear-gradient(135deg, #7c3aed 0%, #c026d3 50%, #db2777 100%);
+}
