@@ -159,6 +159,7 @@ module.exports = {
   editLink,
   updateProductInline,
   bulkAction,
+  fetchMetadata,
   reorderLinks,
   getLinkStats,
   getAnalytics,
@@ -172,6 +173,16 @@ module.exports = {
   upsertRevenueEntry,
   deleteRevenueEntry,
 };
+
+// ── Scrape product metadata from URL
+async function fetchMetadata(req, res, next) {
+  try {
+    const { url } = req.body;
+    if (!url) return res.status(400).json({ success: false, message: 'url required' });
+    const data = await linkService.fetchProductMetadata(url);
+    return res.json({ success: true, data, message: 'OK' });
+  } catch (error) { next(error); }
+}
 
 // ── Inline product edit (name / currentPrice)
 async function updateProductInline(req, res, next) {

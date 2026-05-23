@@ -29,9 +29,15 @@
       "run_at": "document_idle"
     }
   ],
-  "permissions": ["storage", "activeTab"],
+  "permissions": ["storage", "activeTab", "scripting"],
   "host_permissions": [
     "http://localhost:3000/*",
-    "https://api.smartshop.vn/*"
+    "http://localhost:3001/*",
+    "https://api.smartshop.vn/*",
+    "https://shopee.vn/*",
+    "https://shopee.sg/*",
+    "https://www.lazada.vn/*",
+    "https://www.tiktok.com/*",
+    "https://vn.tiktok.com/*"
   ]
 }

@@ -122,6 +122,47 @@ body {
 .btn-primary:hover { background: #6d28d9; }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
+.btn-row { display: flex; gap: 6px; align-items: stretch; }
+.btn-row .btn-primary { flex: 1; }
+
+.btn-ghost {
+  display: flex; align-items: center; justify-content: center;
+  background: transparent; color: #a1a1aa;
+  border: 1px solid #3f3f46; border-radius: 10px; padding: 10px 12px;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-ghost svg { width: 14px; height: 14px; }
+.btn-ghost:hover { color: #fff; border-color: #52525b; background: rgba(255,255,255,0.04); }
+
+.btn-danger {
+  display: flex; align-items: center; justify-content: center;
+  background: transparent; color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.3); border-radius: 10px; padding: 8px;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.15s;
+}
+.btn-danger:hover { background: rgba(248, 113, 113, 0.1); }
+
+.spinner {
+  display: inline-block;
+  width: 12px; height: 12px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Product card refresh button */
+.product-card .icon-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+}
+.product-card { position: relative; }
+
 .btn-danger {
   background: none; border: 1px solid #3f3f46;
   color: #f87171; border-radius: 10px; padding: 9px;

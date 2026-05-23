@@ -1,3 +1,5 @@
+'use strict';
+
 const DEFAULT_API = 'http://localhost:3000';
 
 // ── DOM helpers
@@ -15,42 +17,54 @@ async function saveConfig(data) {
   return new Promise(resolve => chrome.storage.local.set(data, resolve));
 }
 
-// ── Show correct screen
+const SCREENS = ['screen-login', 'screen-settings', 'screen-main', 'screen-no-product'];
+function only(id) {
+  SCREENS.forEach(s => (s === id ? show(s) : hide(s)));
+}
+
+// ── Fetch categories from backend
+async function fetchCategories(apiUrl, userId) {
+  try {
+    const res = await fetch(`${apiUrl}/api/categories/${userId}`);
+    const json = await res.json();
+    return Array.isArray(json.data) ? json.data : [];
+  } catch {
+    return [];
+  }
+}
+
+// ── Show correct screen on boot
 async function init() {
   const config = await getConfig();
   if (!config.slug || !config.userId) {
-    showLoginScreen();
+    only('screen-login');
   } else {
     await showMainScreen(config);
   }
 }
 
-function showLoginScreen() {
-  hide('screen-main');
-  hide('screen-settings');
-  hide('screen-no-product');
-  show('screen-login');
-}
-
 async function showMainScreen(config) {
-  hide('screen-login');
-  hide('screen-settings');
-  show('screen-main');
+  only('screen-main');
 
   // Ask content script for product
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   let product = null;
 
+  // Inject content script lazily if it didn't load (fixes "Receiving end does not exist")
   try {
     const res = await chrome.tabs.sendMessage(tab.id, { type: 'GET_PRODUCT' });
     product = res?.product;
   } catch {
-    // Content script not injected on this page
+    // Content script not available — try injecting on demand
+    try {
+      await chrome.scripting?.executeScript?.({ target: { tabId: tab.id }, files: ['content.js'] });
+      const res = await chrome.tabs.sendMessage(tab.id, { type: 'GET_PRODUCT' });
+      product = res?.product;
+    } catch { /* unsupported page */ }
   }
 
   if (!product?.name) {
-    hide('screen-main');
-    show('screen-no-product');
+    only('screen-no-product');
     return;
   }
 
@@ -58,7 +72,7 @@ async function showMainScreen(config) {
   $('product-name').textContent = product.name;
   $('product-price').textContent = product.currentPrice
     ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.currentPrice)
-    : '';
+    : 'Chưa lấy được giá';
 
   const badge = $('product-platform');
   badge.textContent = product.platform;
@@ -67,21 +81,36 @@ async function showMainScreen(config) {
   if (product.imageUrl) {
     $('product-img').src = product.imageUrl;
     $('product-img').style.display = 'block';
+    $('product-img').onerror = () => { $('product-img').style.display = 'none'; };
   } else {
     $('product-img').style.display = 'none';
   }
 
-  // Store product data on window for submit
+  // Pre-fill affiliate deep link with originalUrl (user replaces with affiliate link)
+  if (!$('input-affiliate').value) {
+    $('input-affiliate').value = product.originalUrl;
+  }
+
+  // Populate categories dropdown
+  const catSelect = $('input-category');
+  if (catSelect) {
+    catSelect.innerHTML = '<option value="">— Không có danh mục —</option>';
+    const cats = await fetchCategories(config.apiUrl || DEFAULT_API, config.userId);
+    for (const c of cats) {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = c.name;
+      catSelect.appendChild(opt);
+    }
+  }
+
+  // Store product data for submit
   window._product = product;
   window._config = config;
 }
 
 function showSettingsScreen(config) {
-  hide('screen-login');
-  hide('screen-main');
-  hide('screen-no-product');
-  show('screen-settings');
-
+  only('screen-settings');
   $('settings-info').textContent = `@${config.slug}  •  ${config.userId?.slice(0, 8)}...`;
   $('settings-api').value = config.apiUrl || DEFAULT_API;
 }
@@ -99,7 +128,6 @@ $('btn-save-login').addEventListener('click', async () => {
   }
   hide('login-error');
 
-  // Validate by calling the dashboard API
   $('btn-save-login').disabled = true;
   $('btn-save-login').textContent = 'Đang kiểm tra...';
   try {
@@ -107,6 +135,10 @@ $('btn-save-login').addEventListener('click', async () => {
     if (!res.ok) throw new Error('Không tìm thấy tài khoản.');
     const json = await res.json();
     if (!json.success) throw new Error('Slug không hợp lệ.');
+    // Verify userId matches
+    if (json.data?.user?.id && json.data.user.id !== userId) {
+      throw new Error('User ID không khớp với slug.');
+    }
   } catch (e) {
     $('login-error').textContent = e.message || 'Lỗi kết nối API.';
     show('login-error');
@@ -121,14 +153,14 @@ $('btn-save-login').addEventListener('click', async () => {
   await showMainScreen({ slug, userId, apiUrl });
 });
 
-// ── Settings button
+// ── Settings toggle
 $('btn-settings').addEventListener('click', async () => {
   const config = await getConfig();
   if ($('screen-settings').classList.contains('hidden')) {
     showSettingsScreen(config);
   } else {
     if (config.slug) await showMainScreen(config);
-    else showLoginScreen();
+    else only('screen-login');
   }
 });
 
@@ -143,7 +175,15 @@ $('btn-update-settings').addEventListener('click', async () => {
 // ── Logout
 $('btn-logout').addEventListener('click', async () => {
   await chrome.storage.local.clear();
-  showLoginScreen();
+  only('screen-login');
+});
+
+// ── Open dashboard
+$('btn-open-dashboard')?.addEventListener('click', async () => {
+  const config = await getConfig();
+  const url = (config.apiUrl || DEFAULT_API).replace(/\/api$/, '').replace(/:3000$/, ':3001');
+  // Dashboard typically lives at frontend domain — try common patterns
+  chrome.tabs.create({ url: `${url.replace(':3000', ':3001')}/dashboard` });
 });
 
 // ── Add product
@@ -161,9 +201,10 @@ $('btn-add').addEventListener('click', async () => {
   const config = window._config;
   const isFeatured = $('toggle-featured').checked;
   const badgeText = $('input-badge').value.trim() || null;
+  const categoryId = $('input-category')?.value || null;
 
   $('btn-add').disabled = true;
-  $('btn-add').textContent = 'Đang thêm...';
+  $('btn-add').innerHTML = '<span class="spinner"></span> Đang thêm...';
 
   try {
     const apiUrl = config.apiUrl || DEFAULT_API;
@@ -180,6 +221,7 @@ $('btn-add').addEventListener('click', async () => {
         affiliateDeepLink,
         isFeatured,
         badgeText,
+        categoryId,
       }),
     });
     const json = await res.json();
@@ -189,6 +231,8 @@ $('btn-add').addEventListener('click', async () => {
     $('input-affiliate').value = '';
     $('input-badge').value = '';
     $('toggle-featured').checked = false;
+    if ($('input-category')) $('input-category').value = '';
+    setTimeout(() => hide('add-success'), 3000);
   } catch (e) {
     $('add-error').textContent = e.message;
     show('add-error');
@@ -200,6 +244,12 @@ $('btn-add').addEventListener('click', async () => {
       </svg>
       Thêm vào Bio Link`;
   }
+});
+
+// ── Refresh button (re-extract product)
+$('btn-refresh')?.addEventListener('click', async () => {
+  const config = await getConfig();
+  await showMainScreen(config);
 });
 
 // ── Boot

@@ -17,6 +17,7 @@ router.get('/api/analytics/:slug', linkController.getAnalytics);
 // ── Link management
 router.post('/api/links/generate', linkController.generate);
 router.post('/api/links/bulk', linkController.bulkAction);
+router.post('/api/links/metadata', linkController.fetchMetadata);
 router.delete('/api/links/:id', linkController.deleteLink);
 router.patch('/api/links/reorder', linkController.reorderLinks);
 router.patch('/api/links/:id/toggle', linkController.toggleLink);

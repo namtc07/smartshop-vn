@@ -560,12 +560,25 @@ async function fetchProductMetadata(rawUrl) {
     parseJsonLdPrice(html) ||
     null;
 
+  // Detect Shopee anti-bot / page-unavailable response so the frontend can
+  // give the user a clearer instruction instead of "no data".
+  const blocked =
+    !name && !imageUrl && !currentPrice && (
+      platform === 'Shopee' ||
+      platform === 'TikTok Shop' ||
+      /Page Unavailable|verify you are human|cloudflare/i.test(html)
+    );
+
   return {
     name,
     imageUrl,
     currentPrice,
     platform,
     originalUrl: url.href,
+    blocked,
+    note: blocked
+      ? `${platform || 'Trang web này'} chặn auto-fill từ server. Vui lòng nhập tay hoặc cài extension SmartShop để fill từ tab đang mở.`
+      : null,
   };
 }
 

@@ -66,13 +66,26 @@
           <div id="product-name" class="product-name"></div>
           <div id="product-price" class="product-price"></div>
         </div>
+        <button id="btn-refresh" class="icon-btn" title="Lấy lại thông tin">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+        </button>
       </div>
 
       <!-- Affiliate link input -->
       <div class="field">
         <label>Affiliate Deep Link <span class="required">*</span></label>
         <input id="input-affiliate" type="url" placeholder="https://s.shopee.vn/..." />
-        <p class="field-hint">Link có tracking affiliate của bạn</p>
+        <p class="field-hint">Pre-fill = link gốc. Đổi sang link affiliate có tracking để nhận hoa hồng.</p>
+      </div>
+
+      <!-- Category -->
+      <div class="field">
+        <label>Danh mục</label>
+        <select id="input-category">
+          <option value="">— Không có danh mục —</option>
+        </select>
       </div>
 
       <!-- Options row -->
@@ -91,12 +104,19 @@
       <div id="add-error" class="error hidden"></div>
       <div id="add-success" class="success hidden">✓ Đã thêm vào Bio Link!</div>
 
-      <button id="btn-add" class="btn-primary">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-        </svg>
-        Thêm vào Bio Link
-      </button>
+      <div class="btn-row">
+        <button id="btn-add" class="btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+          </svg>
+          Thêm vào Bio Link
+        </button>
+        <button id="btn-open-dashboard" class="btn-ghost" title="Mở dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+        </button>
+      </div>
     </div>
 
     <!-- No product detected -->
@@ -104,7 +124,8 @@
       <div class="empty-state">
         <div class="empty-icon">🔍</div>
         <p>Không phát hiện sản phẩm.</p>
-        <p class="hint">Mở trang sản phẩm trên Shopee, Lazada hoặc TikTok Shop.</p>
+        <p class="hint">Mở trang sản phẩm trên Shopee, Lazada hoặc TikTok Shop, rồi click lại extension.</p>
+        <button id="btn-refresh-noprod" class="btn-ghost" onclick="document.getElementById('btn-settings').click(); setTimeout(() => document.getElementById('btn-settings').click(), 100);">Thử lại</button>
       </div>
     </div>
 
